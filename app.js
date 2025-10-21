@@ -8,7 +8,7 @@ const app = express();
 app.use(express.static('public'));
 
 // Define the port number where our server will listen
-const PORT = 3001;
+const PORT = 3003;
 
 // Define a default "route" ('/')
 // req: contains information about the incoming request
