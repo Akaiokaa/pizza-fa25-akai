@@ -3,15 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Papa's Pizza</title>
-
-    <!-- Link to JavaScript -->
-    <script src="js/pizza.js" defer></script>
-
-    <!-- Favicon -->
-    <link rel="icon" href="images/pizza-icon.jpg">
-
-    <!-- Stylesheet -->
+    <title>Thank you</title>
     <link rel="stylesheet" href="styles/pizza-styles.css">
 </head>
 <body>
@@ -23,10 +15,15 @@
             <hr>
             <p>Poppa’s Pizza serves up fresh, handcrafted pizzas with 
                 bold flavors and a warm, family-friendly vibe.</p>
-            <a id="contact-button" href="#" role="button">Contact Us</a>
         </header>
-        <h1>Admin</h1>
-        <a href="/">return</a>
-    <main>
+        <h1>Thank you, for your order, <%= order.fname %>!</h1>
+        <h2>Order Summary</h2>
+        <p>Name: <%= order.fname%> <%= order.lname%></p>
+        <p>Email: <%= order.email%></p>
+        <p>Toppings: <%= order.toppings%></p>
+        <p>Size: <%= order.size%></p>
+        <p>Comment: <%= order.comment%></p>
+        <p>Date/Time: <%= order.timestamp%></p>
+    </main>
 </body>
 </html>

@@ -3,6 +3,8 @@ import express from 'express';
 
 // Create an instance of an Express application
 const app = express();
+//Set EJS as our view engine
+app.set('view engine', 'ejs')
 
 // Enable static file serving
 app.use(express.static('public'));
@@ -23,25 +25,29 @@ app.get('/', (req, res) => {
 
     // Send a response to the client
     // res.send(`<h1>Welcome to Poppa\'s Pizza!</h1>`);
-    res.sendFile(`${import.meta.dirname}/views/home.html`);
+    // res.sendFile(`${import.meta.dirname}/views/home.html`);
+    res.render('home')
 });
 
 app.get('/contact-us', (req, res) => {
-    res.sendFile(`${import.meta.dirname}/views/contact.html`); 
+    // res.render(`${import.meta.dirname}/views/contact.html`);
+    res.render('contact')
 });
 
 app.get('/confirmation', (req, res) => {
-    res.sendFile(`${import.meta.dirname}/views/confirmation.html`); 
+    // res.render(`${import.meta.dirname}/views/confirmation.html`); 
+    res.render('confirmation', { orders} )
 });
 
-app.get('/admin-page', (req, res) => {
-    res.send(orders)
+app.get('/admin', (req, res) => {
+    res.render('admin', {orders})
     // res.sendFile(`${import.meta.dirname}/views/admin.html`); 
 });
 
 app.post('/submit-order', (req, res) => {
     // console.log(req.body);
-    res.sendFile(`${import.meta.dirname}/views/confirmation.html`);
+    // res.render(`${import.meta.dirname}/views/confirmation.html`);
+    const dateOrdered = new Date();
     const order = {
         fname: req.body.fname,
         lname: req.body.lname,
@@ -49,11 +55,15 @@ app.post('/submit-order', (req, res) => {
         method: req.body.method,
         toppings: req.body.toppings,
         size: req.body.size,
-        comment: req.body.comment
+        comment: req.body.comment,
+        timestamp: dateOrdered.toLocaleString()
     };
+    //const prder = req.body; order.fname
     orders.push(order);
     console.log(orders);
     // console.log(orders);
+    res.render('confirmation', {order: order
+    });
 });
 
 
