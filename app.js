@@ -1,5 +1,16 @@
 // Import the express module
 import express from 'express';
+import mysql2 from 'mysql2';
+import dotenv from 'dotenv';
+// Load the variables from .env
+dotenv.config();
+const pool = mysql2.createPool({
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT
+}).promise();
 
 // Create an instance of an Express application
 const app = express();
@@ -18,6 +29,15 @@ const orders = [];
 // Define the port number where our server will listen
 const PORT = 3005;
 
+//Define a rout to test database connection
+app.get('/db-test', async(req, res) => {
+    try {
+        const [orders] = await pool.query('SELECT * FROM orders');
+        res.send(orders);
+    } catch(err) {
+        console.error('Database error:', err)
+    }
+});
 // Define a default "route" ('/')
 // req: contains information about the incoming request
 // res: allows us to send back a response to the client
@@ -39,12 +59,19 @@ app.get('/confirmation', (req, res) => {
     res.render('confirmation', { orders} )
 });
 
-app.get('/admin', (req, res) => {
-    res.render('admin', {orders})
+app.get('/admin', async(req, res) => {
+    try {
+        const [orders] = await pool.query('SELECT * FROM orders');
+        pool.query('SELECT * FROM orders ORDER BY timestamp DESC')
+        res.render('admin', {orders})
+    } catch(err) {
+        console.error('Database error:', err)
+    }
+    
     // res.sendFile(`${import.meta.dirname}/views/admin.html`); 
 });
 
-app.post('/submit-order', (req, res) => {
+app.post('/submit-order', async(req, res) => {
     // console.log(req.body);
     // res.render(`${import.meta.dirname}/views/confirmation.html`);
     const dateOrdered = new Date();
@@ -59,11 +86,28 @@ app.post('/submit-order', (req, res) => {
         timestamp: dateOrdered.toLocaleString()
     };
     //const prder = req.body; order.fname
-    orders.push(order);
-    console.log(orders);
+    // orders.push(order);
+    
+    const sql = "INSERT INTO orders (fname, lname, email, size, method, toppings, timestamp) VALUES (?,?,?,?,?,?,?)";
+    //CREATE array of parameters for each placeholder
+    const params =[
+        order.fname,
+        order.lname,
+        order.email,
+        order.size,
+        order.method,
+        order.toppings,
+        order.timestamp
+    ];
+    try {
+        const [result] = await pool.execute(sql,params);
+        res.render('confirmation', {order});
+    } catch(err){
+        console.log("Database Error")
+    }
     // console.log(orders);
-    res.render('confirmation', {order: order
-    });
+    // console.log(orders);
+    
 });
 
 
