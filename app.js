@@ -36,6 +36,7 @@ app.get('/db-test', async(req, res) => {
         res.send(orders);
     } catch(err) {
         console.error('Database error:', err)
+        res.status(500).send('Database error: ' + err.message);
     }
 });
 // Define a default "route" ('/')
@@ -88,7 +89,7 @@ app.post('/submit-order', async(req, res) => {
     //const prder = req.body; order.fname
     // orders.push(order);
     
-    const sql = "INSERT INTO orders (fname, lname, email, size, method, toppings, timestamp) VALUES (?,?,?,?,?,?,?)";
+    const sql = "INSERT INTO orders (fname, lname, email, size, method, toppings) VALUES (?,?,?,?,?,?)";
     //CREATE array of parameters for each placeholder
     const params =[
         order.fname,
@@ -97,13 +98,12 @@ app.post('/submit-order', async(req, res) => {
         order.size,
         order.method,
         order.toppings,
-        order.timestamp
     ];
     try {
         const [result] = await pool.execute(sql,params);
         res.render('confirmation', {order});
     } catch(err){
-        console.log("Database Error")
+        console.log("Database Error", err.message)
     }
     // console.log(orders);
     // console.log(orders);
