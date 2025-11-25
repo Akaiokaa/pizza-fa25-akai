@@ -2,6 +2,8 @@
 import express from 'express';
 import mysql2 from 'mysql2';
 import dotenv from 'dotenv';
+import { validateForm } from './validation.js';
+
 // Load the variables from .env
 dotenv.config();
 const pool = mysql2.createPool({
@@ -86,6 +88,10 @@ app.post('/submit-order', async(req, res) => {
         comment: req.body.comment,
         timestamp: dateOrdered.toLocaleString()
     };
+    const valid = validateForm(order);
+    if(!valid.isValid) {
+        res.render('home', {errors: valid.errors});
+    }
     //const prder = req.body; order.fname
     // orders.push(order);
     
